@@ -1,7 +1,7 @@
 'use strict'
 
-let tracer = require('opentracing')
-let Backend = require('./tracer')
+import tracer from 'opentracing'
+import Backend from './tracer'
 
 tracer.configure = (options) => {
     tracer.initGlobalTracer(new Backend(options))

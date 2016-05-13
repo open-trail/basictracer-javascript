@@ -1,19 +1,39 @@
-'use strict'
+'use strict';
 
-import BasicSpan from './span'
-import {TextMapPropagator, BinaryPropagator} from './propagation'
-import Sampler from './sampler'
-import Recorder from './recorder'
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-export default class BasicTracer {
-    constructor({sampler, recorder} = {}) {
-        this._sampler = sampler || new Sampler()
-        this._recorder = recorder || new Recorder()
-        this._binaryPropagator = new BinaryPropagator(this)
-        this._textPropagator = new TextMapPropagator(this)
+var _span = require('./span');
+
+var _span2 = _interopRequireDefault(_span);
+
+var _propagation = require('./propagation');
+
+var _sampler = require('./sampler');
+
+var _sampler2 = _interopRequireDefault(_sampler);
+
+var _recorder = require('./recorder');
+
+var _recorder2 = _interopRequireDefault(_recorder);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class BasicTracer {
+    constructor() {
+        var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+        let sampler = _ref.sampler;
+        let recorder = _ref.recorder;
+
+        this._sampler = sampler || new _sampler2.default();
+        this._recorder = recorder || new _recorder2.default();
+        this._binary_propagator = new _propagation.BinaryPropagator(this);
+        this._text_propagator = new _propagation.TextMapPropagator(this);
     }
     setInterface(inf) {
-        this._interface = inf
+        this._interface = inf;
     }
     /**
      * Starts and returns a new Span representing a logical unit of work.
@@ -38,12 +58,12 @@ export default class BasicTracer {
      *         A new Span object.
      */
     startSpan(fields) {
-        return new BasicSpan(this, {
+        return new _span2.default(this, {
             operationName: fields.operationName,
             parent: fields.parent,
             startTime: fields.startTime,
-            tags: fields.tags,
-        })
+            tags: fields.tags
+        });
     }
     /**
      * Injects the information about the given span into the carrier
@@ -77,9 +97,9 @@ export default class BasicTracer {
      */
     inject(span, format, carrier) {
         if (format === this._interface.FORMAT_TEXT_MAP) {
-            this._textPropagator.inject(span, carrier)
+            this._text_propagator.inject(span, carrier);
         } else if (format === this._interface.FORMAT_BINARY) {
-            this._binaryPropagator.inject(span, carrier)
+            this._binary_propagator.inject(span, carrier);
         }
     }
     /**
@@ -107,19 +127,20 @@ export default class BasicTracer {
      * @return {Span}
      */
     join(operationName, format, carrier) {
-        let span
+        let span;
         if (format === this._interface.FORMAT_TEXT_MAP) {
-            span = this._textPropagator.join(operationName, carrier)
+            span = this._text_propagator.join(operationName, carrier);
         } else if (format === this._interface.FORMAT_BINARY) {
-            span = this._binaryPropagator.join(operationName, carrier)
+            span = this._binary_propagator.join(operationName, carrier);
         }
-        return span
+        return span;
     }
 
     isSample(span, parent) {
-        return this._sampler.isSample(span, parent)
+        return this._sampler.isSample(span, parent);
     }
     record(span) {
-        this._recorder.record(span)
+        this._recorder.record(span);
     }
 }
+exports.default = BasicTracer;

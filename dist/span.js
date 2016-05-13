@@ -1,30 +1,43 @@
-'use strict'
+'use strict';
 
-import uuid from 'node-uuid'
-import clone from 'lodash.clone'
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-export default class BasicSpan {
-    constructor(tracer, {operationName, parent, tags, startTime = Date.now()}) {
-        this._tracer = tracer
+var _nodeUuid = require('node-uuid');
 
-        this.operationName = operationName
+var _nodeUuid2 = _interopRequireDefault(_nodeUuid);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class BasicSpan {
+    constructor(tracer, _ref) {
+        let operationName = _ref.operationName;
+        let parent = _ref.parent;
+        let tags = _ref.tags;
+        var _ref$startTime = _ref.startTime;
+        let startTime = _ref$startTime === undefined ? Date.now() : _ref$startTime;
+
+        this._tracer = tracer;
+
+        this.operationName = operationName;
 
         if (parent) {
-            this.traceId = parent.traceId
-            this.spanId = uuid.v4()
-            this.parentId = parent.spanId
-            this.baggage = parent.baggage
+            this.traceId = parent.traceId;
+            this.spanId = _nodeUuid2.default.v4();
+            this.parentId = parent.spanId;
+            this.baggage = parent.baggage;
         } else {
-            this.traceId = uuid.v4()
-            this.spanId = uuid.v4()
-            this.parentId = undefined
-            this.baggage = undefined
+            this.traceId = _nodeUuid2.default.v4();
+            this.spanId = _nodeUuid2.default.v4();
+            this.parentId = undefined;
+            this.baggage = undefined;
         }
-        this.sampled = this._tracer.isSample(this, parent)
+        this.sampled = this._tracer.isSample(this, parent);
 
-        this.tags = clone(tags)
+        this.tags = tags;
 
-        this.startTime = startTime
+        this.startTime = startTime;
     }
     /**
      * Returns the Tracer object used to create this Span.
@@ -32,7 +45,7 @@ export default class BasicSpan {
      * @return {Tracer}
      */
     tracer() {
-        return this._tracer
+        return this._tracer;
     }
     /**
      * Sets the string name for the logical operation this span represents.
@@ -40,7 +53,7 @@ export default class BasicSpan {
      * @param {string} name
      */
     setOperationName(name) {
-        this.operationName = name
+        this.operationName = name;
     }
     /**
      * Adds a single tag to the span.  See `AddTags()` for details.
@@ -50,9 +63,9 @@ export default class BasicSpan {
      */
     setTag(key, value) {
         if (!this.tags) {
-            this.tags = {}
+            this.tags = {};
         }
-        this.tags[key] = value
+        this.tags[key] = value;
     }
     /**
      * Adds the given key value pairs to the set of span tags.
@@ -72,7 +85,7 @@ export default class BasicSpan {
      */
     addTags(keyValuePairs) {
         for (let key in keyValuePairs) {
-            this.setTag(key, keyValuePairs[key])
+            this.setTag(key, keyValuePairs[key]);
         }
     }
     /**
@@ -94,9 +107,9 @@ export default class BasicSpan {
      */
     setBaggageItem(key, value) {
         if (!this.baggage) {
-            this.baggage = {}
+            this.baggage = {};
         }
-        this.baggage[key] = value
+        this.baggage[key] = value;
     }
     /**
      * Returns the value for the given baggage item key.
@@ -109,9 +122,9 @@ export default class BasicSpan {
      */
     getBaggageItem(key) {
         if (this.baggage) {
-            return this.baggage[key]
+            return this.baggage[key];
         }
-        return undefined
+        return undefined;
     }
     /**
      * Explicitly create a log record associated with the span.
@@ -131,15 +144,20 @@ export default class BasicSpan {
      *              An arbitrary structured payload. It is implementation-dependent
      *              how this will be processed.
      */
-    log({event, payload, timestamp = Date.now()}) {
-        if (!this.logs) {
-            this.logs = []
+    log(_ref2) {
+        let event = _ref2.event;
+        let payload = _ref2.payload;
+        var _ref2$timestamp = _ref2.timestamp;
+        let timestamp = _ref2$timestamp === undefined ? Date.now() : _ref2$timestamp;
+
+        if (!this.tags) {
+            this.tags = [];
         }
-        this.logs.push({
+        this.tags.push({
             event,
             payload,
-            timestamp,
-        })
+            timestamp
+        });
     }
     /**
      * Indicates that the unit of work represented by the span is complete or
@@ -157,8 +175,11 @@ export default class BasicSpan {
      *         If not specified, the current time (as defined by the
      *         implementation) will be used.
      */
-    finish(finishTime = Date.now()) {
-        this.duration = finishTime - this.startTime
-        this._tracer.record(this)
+    finish() {
+        let finishTime = arguments.length <= 0 || arguments[0] === undefined ? Date.now() : arguments[0];
+
+        this.duration = finishTime - this.startTime;
+        this._tracer.record(this);
     }
 }
+exports.default = BasicSpan;

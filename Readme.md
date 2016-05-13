@@ -8,19 +8,23 @@
 
 ## Usage
 
-    var tracer = require('basictracer')
-    tracer.configure({
-        sampler: mySampler,
-        recorder: myRecorder,
-    })
+```js
+var tracer = require('basictracer')
+tracer.configure({
+    sampler: mySampler,
+    recorder: myRecorder,
+})
 
-    var span = tracer.startSpan('someOperation')
-    span.tag('key', 'value')
-    span.log({
-        event: 'read',
-        paylog: {duration: 1000},
-    })
-    span.finish()
+var span = tracer.startSpan('someOperation')
+span.tag('key', 'value')
+span.log({
+    event: 'read',
+    paylog: {duration: 1000},
+})
+span.finish()
+```
+
+See [tests](src/__tests__/index.js) for more example.
 
 ## Data Model
 

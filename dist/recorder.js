@@ -1,6 +1,11 @@
-export default class Recorder {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+class Recorder {
     record(span) {
-        console.log(JSON.stringify({ // eslint-disable-line
+        console.log(JSON.stringify({
             operationName: span.operationName,
             startTime: span.startTime,
             duration: span.duration,
@@ -11,7 +16,8 @@ export default class Recorder {
             spanId: span.spanId,
             parentId: span.parentId,
             sampled: span.sampled,
-            baggage: span.baggage,
-        }))
+            baggage: span.baggage
+        }));
     }
 }
+exports.default = Recorder;
