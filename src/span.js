@@ -13,7 +13,7 @@ export default class BasicSpan {
             this.traceId = parent.traceId
             this.spanId = uuid.v4()
             this.parentId = parent.spanId
-            this.baggage = parent.baggage
+            this.baggage = clone(parent.baggage)
         } else {
             this.traceId = uuid.v4()
             this.spanId = uuid.v4()
