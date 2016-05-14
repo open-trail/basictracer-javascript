@@ -48,7 +48,7 @@ describe('Tracer', () => {
         let parentSpan = tracer.startSpan({operationName: OPERATION_NAME})
         let span = tracer.startSpan({
             operationName: ANOTHER_OPERATION_NAME,
-            parent: parentSpan
+            parent: parentSpan,
         })
         should(span.traceId).eql(parentSpan.traceId)
         should(span.spanId).not.eql(parentSpan.spanId)

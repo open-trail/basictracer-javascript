@@ -3,6 +3,7 @@
   "description": "The Javascript implementation of the BasicTracer referrence implementation",
   "repository": "CatTail/basictracer-javascript",
   "version": "0.1.0",
+  "main": "dist/index.js",
   "keywords": [
     "opentracing"
   ],

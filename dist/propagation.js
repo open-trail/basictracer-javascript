@@ -60,16 +60,16 @@ class TextMapPropagator {
         for (let field in carrier) {
             if (field === FIELD_NAME_TRACE_ID) {
                 parent.traceId = carrier[field];
-                count = count + 1;
+                count += 1;
             } else if (field === FIELD_NAME_SPAN_ID) {
                 parent.spanId = carrier[field];
-                count = count + 1;
+                count += 1;
             } else if (field === FIELD_NAME_SAMPLED) {
                 if (carrier[field] !== 'true' && carrier[field] !== 'false') {
                     throw new Error('Trace corrupted, sampled should be type ' + `Boolean, got ${ carrier[field] }`);
                 }
                 parent.sampled = Boolean(carrier[field]);
-                count = count + 1;
+                count += 1;
             } else if (field.indexOf(PREFIX_BAGGAGE) === 0) {
                 if (!parent.baggage) {
                     parent.baggage = {};
@@ -77,7 +77,7 @@ class TextMapPropagator {
                 parent.baggage[field.slice(PREFIX_BAGGAGE.length)] = carrier[field];
             }
         }
-        if (count !== 3) {
+        if (count !== FIELD_COUNT) {
             throw new Error('Trace corrupted, ' + 'require traceId, spanId and sampled');
         }
         return new _span2.default(this._tracer, {

@@ -29,8 +29,8 @@ class BasicTracer {
 
         this._sampler = sampler || new _sampler2.default();
         this._recorder = recorder || new _recorder2.default();
-        this._binary_propagator = new _propagation.BinaryPropagator(this);
-        this._text_propagator = new _propagation.TextMapPropagator(this);
+        this._binaryPropagator = new _propagation.BinaryPropagator(this);
+        this._textPropagator = new _propagation.TextMapPropagator(this);
     }
     setInterface(inf) {
         this._interface = inf;
@@ -97,9 +97,9 @@ class BasicTracer {
      */
     inject(span, format, carrier) {
         if (format === this._interface.FORMAT_TEXT_MAP) {
-            this._text_propagator.inject(span, carrier);
+            this._textPropagator.inject(span, carrier);
         } else if (format === this._interface.FORMAT_BINARY) {
-            this._binary_propagator.inject(span, carrier);
+            this._binaryPropagator.inject(span, carrier);
         }
     }
     /**
@@ -129,9 +129,9 @@ class BasicTracer {
     join(operationName, format, carrier) {
         let span;
         if (format === this._interface.FORMAT_TEXT_MAP) {
-            span = this._text_propagator.join(operationName, carrier);
+            span = this._textPropagator.join(operationName, carrier);
         } else if (format === this._interface.FORMAT_BINARY) {
-            span = this._binary_propagator.join(operationName, carrier);
+            span = this._binaryPropagator.join(operationName, carrier);
         }
         return span;
     }

@@ -8,6 +8,10 @@ var _nodeUuid = require('node-uuid');
 
 var _nodeUuid2 = _interopRequireDefault(_nodeUuid);
 
+var _lodash = require('lodash.clone');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class BasicSpan {
@@ -35,7 +39,7 @@ class BasicSpan {
         }
         this.sampled = this._tracer.isSample(this, parent);
 
-        this.tags = tags;
+        this.tags = (0, _lodash2.default)(tags);
 
         this.startTime = startTime;
     }
@@ -150,10 +154,10 @@ class BasicSpan {
         var _ref2$timestamp = _ref2.timestamp;
         let timestamp = _ref2$timestamp === undefined ? Date.now() : _ref2$timestamp;
 
-        if (!this.tags) {
-            this.tags = [];
+        if (!this.logs) {
+            this.logs = [];
         }
-        this.tags.push({
+        this.logs.push({
             event,
             payload,
             timestamp

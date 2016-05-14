@@ -24,7 +24,7 @@ describe('BinaryPropagator', () => {
         let span = tracer.startSpan({ operationName: OPERATION_NAME });
         let carrier = {};
         binaryPropagator.inject(span, carrier);
-        carrier.buffer.should.be.type('string');
+        should(carrier.buffer).be.type('string');
     });
 
     it('should link span via carrier', () => {
@@ -33,11 +33,11 @@ describe('BinaryPropagator', () => {
         binaryPropagator.inject(span, carrier);
 
         let childSpan = binaryPropagator.join(OPERATION_NAME, carrier);
-        childSpan.traceId.should.eql(span.traceId);
-        childSpan.spanId.should.not.eql(span.spanId);
-        childSpan.parentId.should.eql(span.spanId);
-        childSpan.sampled.should.eql(span.sampled);
-        childSpan.baggage.should.eql(span.baggage);
+        should(childSpan.traceId).eql(span.traceId);
+        should(childSpan.spanId).not.eql(span.spanId);
+        should(childSpan.parentId).eql(span.spanId);
+        should(childSpan.sampled).eql(span.sampled);
+        should(childSpan.baggage).eql(span.baggage);
     });
 });
 
@@ -47,11 +47,7 @@ describe('TextMapPropagator', () => {
         span.setBaggageItem('key', 'value');
         let carrier = {};
         textMapPropagator.inject(span, carrier);
-        carrier.traceId.should.be.type('string');
-        carrier.spanId.should.be.type('string');
-        carrier.sampled.should.be.type('boolean');
-        carrier.baggage.should.be.type('object');
-        carrier.baggage.key.should.eql('value');
+        should(Object.keys(carrier).length).eql(4);
     });
 
     it('should link span via carrier', () => {
@@ -60,11 +56,11 @@ describe('TextMapPropagator', () => {
         textMapPropagator.inject(span, carrier);
 
         let childSpan = textMapPropagator.join(OPERATION_NAME, carrier);
-        childSpan.traceId.should.eql(span.traceId);
-        childSpan.spanId.should.not.eql(span.spanId);
-        childSpan.parentId.should.eql(span.spanId);
-        childSpan.sampled.should.eql(span.sampled);
-        childSpan.baggage.should.eql(span.baggage);
+        should(childSpan.traceId).eql(span.traceId);
+        should(childSpan.spanId).not.eql(span.spanId);
+        should(childSpan.parentId).eql(span.spanId);
+        should(childSpan.sampled).eql(span.sampled);
+        should(childSpan.baggage).eql(span.baggage);
     });
 
     it('should report corrupted trace with invalid carrier', () => {
@@ -72,16 +68,18 @@ describe('TextMapPropagator', () => {
             traceId: undefined,
             spanId: 'hello',
             sampled: true
-        }(() => {
+        };
+        should(() => {
             textMapPropagator.join(OPERATION_NAME, carrierMissingRequired);
-        }).should.throw();
+        }).throw();
 
         let carrierInvalidSample = {
             traceId: 'hello',
             spanId: 'world',
             sampled: 'notTrue'
-        }(() => {
+        };
+        should(() => {
             textMapPropagator.join(OPERATION_NAME, carrierInvalidSample);
-        }).should.throw();
+        }).throw();
     });
 });

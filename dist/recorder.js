@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 class Recorder {
     record(span) {
-        console.log(JSON.stringify({
+        console.log(JSON.stringify({ // eslint-disable-line
             operationName: span.operationName,
             startTime: span.startTime,
             duration: span.duration,
