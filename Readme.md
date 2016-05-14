@@ -24,7 +24,7 @@ span.log({
 span.finish()
 ```
 
-See [tests](src/__tests__/index.js) for more example.
+See [tests](src/__tests__/index-test.js) for more example.
 
 ## Data Model
 
