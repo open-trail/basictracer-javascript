@@ -13,9 +13,10 @@ const ANOTHER_OPERATION_NAME = 'another-basictracer-test'
 describe('Span', () => {
     it('should construct a new span', () => {
         let parent = {
-            traceId: 'fake-traceId',
-            spanId: 'fake-parentId',
+            traceId: Span.generateUUID(),
+            spanId: Span.generateUUID(),
             sampled: true,
+            baggage: {},
         }
         let tags = {key: 'value'}
         let span = new Span(tracer, {
@@ -32,11 +33,11 @@ describe('Span', () => {
         should(span.tags).not.equal(tags)
         should(span.logs).not.be.ok()
 
-        should(span.traceId).eql(parent.traceId)
-        should(span.spanId).be.type('string')
-        should(span.parentId).equal(parent.spanId)
+        should(span.traceId.equals(parent.traceId)).be.ok()
+        should(span.spanId).be.type('object')
+        should(span.parentId.equals(parent.spanId)).be.ok()
         should(span.sampled).eql(parent.sampled)
-        should(span.baggage).not.be.ok()
+        should(span.baggage).be.type('object')
     })
 
     it('should create root span', () => {
@@ -47,11 +48,11 @@ describe('Span', () => {
         should(rootSpan.tags).not.be.ok()
         should(rootSpan.logs).not.be.ok()
 
-        should(rootSpan.traceId).be.type('string')
-        should(rootSpan.spanId).be.type('string')
-        should(rootSpan.parentId).not.be.ok()
+        should(rootSpan.traceId).be.type('object')
+        should(rootSpan.spanId).be.type('object')
+        should(rootSpan.parentId.equals(rootSpan.spanId)).be.ok()
         should(rootSpan.sampled).eql(true)
-        should(rootSpan.baggage).not.be.ok()
+        should(rootSpan.baggage).be.type('object')
     })
 
     it('should allow change operationName', () => {
@@ -81,7 +82,7 @@ describe('Span', () => {
 
     it('should set and get baggage', () => {
         let span = new Span(tracer, {operationName: OPERATION_NAME})
-        should(span.tags).not.be.ok()
+        should(span.baggage).be.type('object')
 
         span.setBaggageItem('key', 'value')
         should(span.baggage).be.type('object')

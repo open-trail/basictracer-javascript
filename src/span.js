@@ -2,6 +2,7 @@
 
 import uuid from 'node-uuid'
 import clone from 'lodash.clone'
+import Long from 'long'
 
 export default class BasicSpan {
     constructor(tracer, {operationName, parent, tags, startTime = Date.now()}) {
@@ -11,14 +12,14 @@ export default class BasicSpan {
 
         if (parent) {
             this.traceId = parent.traceId
-            this.spanId = uuid.v4()
+            this.spanId = BasicSpan.generateUUID()
             this.parentId = parent.spanId
             this.baggage = clone(parent.baggage)
         } else {
-            this.traceId = uuid.v4()
-            this.spanId = uuid.v4()
-            this.parentId = undefined
-            this.baggage = undefined
+            this.traceId = BasicSpan.generateUUID()
+            this.spanId = BasicSpan.generateUUID()
+            this.parentId = this.spanId
+            this.baggage = {}
         }
         this.sampled = this._tracer.isSample(this, parent)
 
@@ -93,9 +94,6 @@ export default class BasicSpan {
      * @param {string} value
      */
     setBaggageItem(key, value) {
-        if (!this.baggage) {
-            this.baggage = {}
-        }
         this.baggage[key] = value
     }
     /**
@@ -108,10 +106,7 @@ export default class BasicSpan {
      *         correspond to a set trace attribute.
      */
     getBaggageItem(key) {
-        if (this.baggage) {
-            return this.baggage[key]
-        }
-        return undefined
+        return this.baggage[key]
     }
     /**
      * Explicitly create a log record associated with the span.
@@ -160,5 +155,10 @@ export default class BasicSpan {
     finish(finishTime = Date.now()) {
         this.duration = finishTime - this.startTime
         this._tracer.record(this)
+    }
+
+    static generateUUID() {
+        let buffer = uuid.v4(null, new Buffer(8))
+        return new Long(buffer.readUInt32LE(), buffer.readUInt32LE(4), true)
     }
 }

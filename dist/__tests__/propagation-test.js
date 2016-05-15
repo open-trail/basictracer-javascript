@@ -24,7 +24,8 @@ describe('BinaryPropagator', () => {
         let span = tracer.startSpan({ operationName: OPERATION_NAME });
         let carrier = {};
         binaryPropagator.inject(span, carrier);
-        should(carrier.buffer).be.type('string');
+        // Buffer instance
+        should(carrier.buffer).be.type('object');
     });
 
     it('should link span via carrier', () => {
@@ -33,9 +34,9 @@ describe('BinaryPropagator', () => {
         binaryPropagator.inject(span, carrier);
 
         let childSpan = binaryPropagator.join(OPERATION_NAME, carrier);
-        should(childSpan.traceId).eql(span.traceId);
-        should(childSpan.spanId).not.eql(span.spanId);
-        should(childSpan.parentId).eql(span.spanId);
+        should(childSpan.traceId.equals(span.traceId)).be.ok();
+        should(childSpan.spanId.equals(span.spanId)).be.not.ok();
+        should(childSpan.parentId.equals(span.spanId)).be.ok();
         should(childSpan.sampled).eql(span.sampled);
         should(childSpan.baggage).eql(span.baggage);
     });
@@ -56,9 +57,9 @@ describe('TextMapPropagator', () => {
         textMapPropagator.inject(span, carrier);
 
         let childSpan = textMapPropagator.join(OPERATION_NAME, carrier);
-        should(childSpan.traceId).eql(span.traceId);
-        should(childSpan.spanId).not.eql(span.spanId);
-        should(childSpan.parentId).eql(span.spanId);
+        should(childSpan.traceId.equals(span.traceId)).be.ok();
+        should(childSpan.spanId.equals(span.spanId)).be.not.ok();
+        should(childSpan.parentId.equals(span.spanId)).be.ok();
         should(childSpan.sampled).eql(span.sampled);
         should(childSpan.baggage).eql(span.baggage);
     });

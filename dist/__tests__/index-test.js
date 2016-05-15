@@ -17,9 +17,9 @@ describe('Interface', () => {
         let imp = rootSpan.imp();
         should(imp.traceId).be.ok();
         should(imp.spanId).be.ok();
-        should(imp.parentId).be.not.ok();
+        should(imp.parentId.equals(imp.spanId)).be.ok();
         should(imp.sampled).be.type('boolean');
-        should(imp.baggage).not.be.ok();
+        should(imp.baggage).be.type('object');
     });
 
     it('should inject context into carrier', () => {
@@ -40,9 +40,9 @@ describe('Interface', () => {
 
         let parentImp = parentSpan.imp();
         let imp = span.imp();
-        should(imp.traceId).eql(parentImp.traceId);
-        should(imp.spanId).not.eql(parentImp.spanId);
-        should(imp.parentId).eql(parentImp.spanId);
+        should(imp.traceId.equals(parentImp.traceId)).be.ok();
+        should(imp.spanId.equals(parentImp.spanId)).be.not.ok();
+        should(imp.parentId.equals(parentImp.spanId)).be.ok();
         should(imp.sampled).eql(parentImp.sampled);
         should(imp.baggage).eql(parentImp.baggage);
     });
@@ -55,9 +55,9 @@ describe('Interface', () => {
         });
         let parentImp = parentSpan.imp();
         let imp = span.imp();
-        should(imp.traceId).eql(parentImp.traceId);
-        should(imp.spanId).not.eql(parentImp.spanId);
-        should(imp.parentId).eql(parentImp.spanId);
+        should(imp.traceId.equals(parentImp.traceId)).be.ok();
+        should(imp.spanId.equals(parentImp.spanId)).not.be.ok();
+        should(imp.parentId.equals(parentImp.spanId)).be.ok();
         should(imp.sampled).eql(parentImp.sampled);
         should(imp.baggage).not.be.ok();
     });

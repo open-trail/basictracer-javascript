@@ -12,6 +12,10 @@ var _lodash = require('lodash.clone');
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _long = require('long');
+
+var _long2 = _interopRequireDefault(_long);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class BasicSpan {
@@ -28,14 +32,14 @@ class BasicSpan {
 
         if (parent) {
             this.traceId = parent.traceId;
-            this.spanId = _nodeUuid2.default.v4();
+            this.spanId = BasicSpan.generateUUID();
             this.parentId = parent.spanId;
-            this.baggage = parent.baggage;
+            this.baggage = (0, _lodash2.default)(parent.baggage);
         } else {
-            this.traceId = _nodeUuid2.default.v4();
-            this.spanId = _nodeUuid2.default.v4();
-            this.parentId = undefined;
-            this.baggage = undefined;
+            this.traceId = BasicSpan.generateUUID();
+            this.spanId = BasicSpan.generateUUID();
+            this.parentId = this.spanId;
+            this.baggage = {};
         }
         this.sampled = this._tracer.isSample(this, parent);
 
@@ -110,9 +114,6 @@ class BasicSpan {
      * @param {string} value
      */
     setBaggageItem(key, value) {
-        if (!this.baggage) {
-            this.baggage = {};
-        }
         this.baggage[key] = value;
     }
     /**
@@ -125,10 +126,7 @@ class BasicSpan {
      *         correspond to a set trace attribute.
      */
     getBaggageItem(key) {
-        if (this.baggage) {
-            return this.baggage[key];
-        }
-        return undefined;
+        return this.baggage[key];
     }
     /**
      * Explicitly create a log record associated with the span.
@@ -184,6 +182,11 @@ class BasicSpan {
 
         this.duration = finishTime - this.startTime;
         this._tracer.record(this);
+    }
+
+    static generateUUID() {
+        let buffer = _nodeUuid2.default.v4(null, new Buffer(8));
+        return new _long2.default(buffer.readUInt32LE(), buffer.readUInt32LE(4), true);
     }
 }
 exports.default = BasicSpan;

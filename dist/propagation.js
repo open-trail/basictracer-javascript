@@ -1,10 +1,21 @@
 'use strict';
 
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
+var _protobufjs = require('protobufjs');
+
+var _protobufjs2 = _interopRequireDefault(_protobufjs);
+
 var _span = require('./span');
 
 var _span2 = _interopRequireDefault(_span);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+let builder = _protobufjs2.default.loadProtoFile(_path2.default.join(__dirname, './state.proto'));
+let TracerState = builder.build('TracerState');
 
 class BinaryPropagator {
     constructor(tracer) {
@@ -12,20 +23,29 @@ class BinaryPropagator {
     }
 
     inject(span, carrier) {
-        try {
-            carrier.buffer = JSON.stringify({
-                traceId: span.traceId,
-                spanId: span.spanId,
-                sampled: span.sampled,
-                baggage: span.baggage
-            });
-        } catch (err) {
-            throw new Error('Trace corrupted, unable to parse binary carrier');
-        }
+        let parent = {
+            trace_id: span.traceId, // eslint-disable-line
+            span_id: span.spanId, // eslint-disable-line
+            sampled: span.sampled,
+            baggage_items: span.baggage };
+        // eslint-disable-line
+        let state = new TracerState(parent);
+        carrier.buffer = state.toBuffer();
     }
 
     join(operationName, carrier) {
-        let parent = JSON.parse(carrier.buffer);
+        let parent;
+        try {
+            let state = TracerState.decode(carrier.buffer).toRaw();
+            parent = {
+                traceId: state.trace_id,
+                spanId: state.span_id,
+                sampled: state.sampled,
+                baggage: state.baggage_items
+            };
+        } catch (err) {
+            throw new Error('Trace corrupted, unable to parse binary carrier');
+        }
         return new _span2.default(this._tracer, {
             operationName,
             parent
@@ -55,7 +75,9 @@ class TextMapPropagator {
     }
 
     join(operationName, carrier) {
-        let parent = {};
+        let parent = {
+            baggage: {}
+        };
         let count = 0;
         for (let field in carrier) {
             if (field === FIELD_NAME_TRACE_ID) {
@@ -71,9 +93,6 @@ class TextMapPropagator {
                 parent.sampled = Boolean(carrier[field]);
                 count += 1;
             } else if (field.indexOf(PREFIX_BAGGAGE) === 0) {
-                if (!parent.baggage) {
-                    parent.baggage = {};
-                }
                 parent.baggage[field.slice(PREFIX_BAGGAGE.length)] = carrier[field];
             }
         }
