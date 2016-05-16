@@ -35,12 +35,14 @@ See [tests](src/__tests__/index-test.js) for more example.
         tags: [Object]
         logs: [Array]
 
-        traceId: String
-        spanId: String
+        traceId: Long
+        spanId: Long
         parentId: [String]
         sampled: Boolean
         baggage: [Object]
     }
+
+`Long` type represent by [long.js](https://github.com/dcodeIO/long.js)
 
 ## License
 
