@@ -14,6 +14,7 @@ let tracer = new _tracer2.default();
 tracer.setInterface(_opentracing2.default);
 
 const FORMAT_TEXT_MAP = _opentracing2.default.FORMAT_TEXT_MAP;
+const FORMAT_BINARY = _opentracing2.default.FORMAT_BINARY;
 
 const OPERATION_NAME = 'basictracer-test';
 const ANOTHER_OPERATION_NAME = 'another-basictracer-test';
@@ -38,11 +39,26 @@ describe('Tracer', () => {
     it('should join receving span', () => {
         // inject
         let parentSpan = tracer.startSpan({ operationName: OPERATION_NAME });
-        let carrier = { baggage: { key: 'value' } };
+        let carrier = {};
         tracer.inject(parentSpan, FORMAT_TEXT_MAP, carrier);
 
         // join
         let span = tracer.join(ANOTHER_OPERATION_NAME, FORMAT_TEXT_MAP, carrier);
+        should(span.traceId.equals(parentSpan.traceId)).be.ok();
+        should(span.spanId.equals(parentSpan.spanId)).be.not.ok();
+        should(span.parentId.equals(parentSpan.spanId)).be.ok();
+        should(span.sampled).eql(parentSpan.sampled);
+        should(span.baggage).eql(parentSpan.baggage);
+    });
+
+    it('should join binary span', () => {
+        // inject
+        let parentSpan = tracer.startSpan({ operationName: OPERATION_NAME });
+        let carrier = {};
+        tracer.inject(parentSpan, FORMAT_BINARY, carrier);
+
+        // join
+        let span = tracer.join(ANOTHER_OPERATION_NAME, FORMAT_BINARY, carrier);
         should(span.traceId.equals(parentSpan.traceId)).be.ok();
         should(span.spanId.equals(parentSpan.spanId)).be.not.ok();
         should(span.parentId.equals(parentSpan.spanId)).be.ok();

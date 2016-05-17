@@ -38,6 +38,11 @@ export default class BasicTracer {
      *         A new Span object.
      */
     startSpan(fields) {
+        // Interface or Implementation argument
+        // https://github.com/opentracing/opentracing-javascript/pull/29
+        if (fields.parent && typeof fields.parent.imp === 'function') {
+            fields.parent = fields.parent.imp()
+        }
         return new BasicSpan(this, {
             operationName: fields.operationName,
             parent: fields.parent,
