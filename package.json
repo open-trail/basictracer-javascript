@@ -1,11 +1,11 @@
 {
   "name": "basictracer",
   "description": "The Javascript implementation of the BasicTracer referrence implementation",
-  "repository": "opentracing/basictracer-javascript",
+  "repository": "CatTail/basictracer-javascript",
   "version": "0.2.3",
   "main": "dist/index.js",
   "keywords": [
-    "opentracing"
+    "trace"
   ],
   "files": [
     "dist"
@@ -27,7 +27,6 @@
     "debug": "^2.2.0",
     "lodash.clone": "^4.3.2",
     "long": "^3.1.0",
-    "opentracing": "^0.9.18",
     "node-uuid": "^1.4.7",
     "protobufjs": "^5.0.1"
   },

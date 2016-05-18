@@ -1,3 +1,5 @@
+'use strict'
+
 export class DefaultSampler {
     /**
      * @param  {Span} span Span to be determined.

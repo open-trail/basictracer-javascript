@@ -1,11 +1,9 @@
 'use strict'
 
-import inf from 'opentracing'
 import Tracer from '../tracer'
 import Span from '../span'
 
 let tracer = new Tracer()
-tracer.setInterface(inf)
 
 const OPERATION_NAME = 'basictracer-test'
 const ANOTHER_OPERATION_NAME = 'another-basictracer-test'
@@ -94,10 +92,7 @@ describe('Span', () => {
         let span = new Span(tracer, {operationName: OPERATION_NAME})
         should(span.logs).not.be.ok()
 
-        span.log({
-            event: 'read',
-            payload: {duration: 1000},
-        })
+        span.log('read', {duration: 1000})
         should(span.logs).be.type('object')
         should(span.logs[0].timestamp).be.type('number')
         should(span.logs[0].event).eql('read')

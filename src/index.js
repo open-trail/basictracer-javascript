@@ -1,20 +1,15 @@
 'use strict'
 
-import tracer from 'opentracing'
-import Backend from './tracer'
+import Tracer from './tracer'
+import Span from './span'
 import {DefaultSampler} from './sampler'
-import {DefaultRecorder, DebuggingRecorder} from './recorder'
+import {DefaultRecorder} from './recorder'
 
-
-// Little hack because interface don't expose a way to extend supported
-// carrier format
-tracer.FORMAT_HTTP_HEADER = 'http_header'
-
-tracer.configure = (options) => {
-    tracer.initGlobalTracer(new Backend(options))
-}
+let tracer = new Tracer()
 
 tracer.DefaultSampler = DefaultSampler
 tracer.DefaultRecorder = DefaultRecorder
-tracer.DebuggingRecorder = DebuggingRecorder
+tracer.Tracer = Tracer
+tracer.Span = Span
+
 module.exports = tracer

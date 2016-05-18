@@ -1,11 +1,9 @@
 'use strict'
 
-import inf from 'opentracing'
 import Tracer from '../tracer'
 import {TextMapPropagator, BinaryPropagator} from '../propagation'
 
 let tracer = new Tracer()
-tracer.setInterface(inf)
 let textMapPropagator = new TextMapPropagator(tracer)
 let binaryPropagator = new BinaryPropagator(tracer)
 let httpHeaderPropagator = new TextMapPropagator(tracer, 'x-')
@@ -14,7 +12,7 @@ const OPERATION_NAME = 'basictracer-test'
 
 describe('BinaryPropagator', () => {
     it('should inject into buffer field', () => {
-        let span = tracer.startSpan({operationName: OPERATION_NAME})
+        let span = tracer.startSpan(OPERATION_NAME)
         let carrier = {}
         binaryPropagator.inject(span, carrier)
         // Buffer instance
@@ -22,7 +20,7 @@ describe('BinaryPropagator', () => {
     })
 
     it('should link span via carrier', () => {
-        let span = tracer.startSpan({operationName: OPERATION_NAME})
+        let span = tracer.startSpan(OPERATION_NAME)
         let carrier = {}
         binaryPropagator.inject(span, carrier)
 
@@ -37,7 +35,7 @@ describe('BinaryPropagator', () => {
 
 describe('TextMapPropagator', () => {
     it('should inject into buffer field', () => {
-        let span = tracer.startSpan({operationName: OPERATION_NAME})
+        let span = tracer.startSpan(OPERATION_NAME)
         span.setBaggageItem('key', 'value')
         let carrier = {}
         textMapPropagator.inject(span, carrier)
@@ -45,7 +43,7 @@ describe('TextMapPropagator', () => {
     })
 
     it('should link span via carrier', () => {
-        let span = tracer.startSpan({operationName: OPERATION_NAME})
+        let span = tracer.startSpan(OPERATION_NAME)
         let carrier = {}
         textMapPropagator.inject(span, carrier)
 
@@ -78,7 +76,7 @@ describe('TextMapPropagator', () => {
     })
 
     it('should support x- http header format', () => {
-        let rootSpan = tracer.startSpan({operationName: OPERATION_NAME})
+        let rootSpan = tracer.startSpan(OPERATION_NAME)
         let carrier = {}
         httpHeaderPropagator.inject(rootSpan, carrier)
         Object.keys((key) => {

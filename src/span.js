@@ -5,7 +5,7 @@ import clone from 'lodash.clone'
 import Long from 'long'
 
 // Implement https://github.com/opentracing/opentracing-javascript/blob/master/src%2Fspan.js
-export default class BasicSpan {
+export default class Span {
     constructor(tracer, {operationName, parent, tags, startTime = Date.now()}) {
         this._tracer = tracer
 
@@ -13,13 +13,13 @@ export default class BasicSpan {
 
         if (parent) {
             this.traceId = parent.traceId
-            this.spanId = BasicSpan.generateUUID()
+            this.spanId = Span.generateUUID()
             this.parentId = parent.spanId
             this.sampled = parent.sampled
             this.baggage = clone(parent.baggage)
         } else {
-            this.traceId = BasicSpan.generateUUID()
-            this.spanId = BasicSpan.generateUUID()
+            this.traceId = Span.generateUUID()
+            this.spanId = Span.generateUUID()
             this.parentId = this.spanId
             this.sampled = this._tracer._isSampled(this)
             this.baggage = {}
@@ -28,10 +28,6 @@ export default class BasicSpan {
         this.tags = clone(tags)
 
         this.startTime = startTime
-    }
-
-    tracer() {
-        return this._tracer
     }
 
     setOperationName(name) {
@@ -59,7 +55,7 @@ export default class BasicSpan {
         return this.baggage[key]
     }
 
-    log({event, payload, timestamp = Date.now()}) {
+    log(event, payload, timestamp = Date.now()) {
         if (!this.logs) {
             this.logs = []
         }

@@ -24,11 +24,11 @@ span.log({
 span.finish()
 ```
 
-See [tests](src/__tests__/index-test.js) for more example.
+See [tests](src/__tests__/tracer-test.js) for more example.
 
 ## Data Model
 
-    type BasicSpan {
+    type Span {
         operationName: String
         startTime: Number
         duration: Number
@@ -37,9 +37,9 @@ See [tests](src/__tests__/index-test.js) for more example.
 
         traceId: Long
         spanId: Long
-        parentId: [String]
+        parentId: String
         sampled: Boolean
-        baggage: [Object]
+        baggage: Object
     }
 
 `Long` type represent by [long.js](https://github.com/dcodeIO/long.js)
@@ -50,7 +50,7 @@ MIT
 
 [npm-image]: https://img.shields.io/npm/v/basictracer.svg?style=flat
 [npm-url]: https://npmjs.org/package/basictracer
-[travis-image]: https://img.shields.io/travis/opentracing/basictracer-javascript.svg?style=flat
-[travis-url]: https://travis-ci.org/opentracing/basictracer-javascript
-[coveralls-image]: https://img.shields.io/coveralls/opentracing/basictracer-javascript.svg?style=flat
-[coveralls-url]: https://coveralls.io/r/opentracing/basictracer-javascript?branch=master
+[travis-image]: https://img.shields.io/travis/CatTail/basictracer-javascript.svg?style=flat
+[travis-url]: https://travis-ci.org/CatTail/basictracer-javascript
+[coveralls-image]: https://img.shields.io/coveralls/CatTail/basictracer-javascript.svg?style=flat
+[coveralls-url]: https://coveralls.io/r/CatTail/basictracer-javascript?branch=master
