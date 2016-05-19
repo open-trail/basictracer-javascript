@@ -2,8 +2,6 @@
 
 import Span from './span'
 import {TextMapPropagator, BinaryPropagator} from './propagation'
-import {DefaultSampler} from './sampler'
-import {DefaultRecorder, DebuggingRecorder} from './recorder'
 import constants from './constants'
 
 const isTest = process.env.NODE_ENV === 'test'
@@ -11,32 +9,26 @@ const isTest = process.env.NODE_ENV === 'test'
 // Implement https://github.com/opentracing/opentracing-javascript/blob/master/src/tracer.js
 export default class Tracer {
     constructor() {
-        this._sampler = new DefaultSampler()
-        this._recorder = isTest ?
-            new DebuggingRecorder() : new DefaultRecorder()
         this._binaryPropagator = new BinaryPropagator(this)
         this._textPropagator = new TextMapPropagator(this)
+        this._httpHeaderPropagator = new TextMapPropagator(this, 'x-')
     }
 
     /**
-     * Configure sampler and recorder
-     * @param  {Object} options
-     *         Optional associative array of fields.
-     *         - `sampler` {Sampler} Optional object with `isSample` method, the
-     *             method provided with current span as arguments, return
-     *             Boolean value indicate whether should take current span
-     *             as sample. See src/sample.js for example.
-     *         - `recorder` {Recorder} Optional object with `record` method, the
-     *             method take span and do whatever required to record a span.
-     *             See src/recorder.js for example.
+     * @param  {Function}
+     *         The method provided with current span as arguments, return
+     *         Boolean value indicate whether should take current span as sample.
      */
-    configure({sampler, recorder} = {}) {
-        if (sampler) {
-            this._sampler = sampler
-        }
-        if (recorder) {
-            this._recorder = recorder
-        }
+    setSampler(isSampled) {
+        this._isSampled = isSampled
+    }
+
+    /**
+     * @param  {Function}
+     *         The method take span and do whatever required to record a span.
+     */
+    setRecorder(record) {
+        this._recorder = record
     }
 
     /**
@@ -103,10 +95,16 @@ export default class Tracer {
      *         See the method description for details on the carrier object.
      */
     inject(span, format, carrier) {
-        if (format === constants.FORMAT_TEXT_MAP) {
-            this._textPropagator.inject(span, carrier)
-        } else if (format === constants.FORMAT_BINARY) {
-            this._binaryPropagator.inject(span, carrier)
+        switch (format) {
+            case constants.FORMAT_TEXT_MAP:
+                this._textPropagator.inject(span, carrier)
+                break
+            case constants.FORMAT_BINARY:
+                this._binaryPropagator.inject(span, carrier)
+                break
+            case constants.FORMAT_HTTP_HEADER:
+                this._httpHeaderPropagator.inject(span, carrier)
+                break
         }
     }
 
@@ -136,18 +134,38 @@ export default class Tracer {
      */
     join(operationName, format, carrier) {
         let span
-        if (format === constants.FORMAT_TEXT_MAP) {
-            span = this._textPropagator.join(operationName, carrier)
-        } else if (format === constants.FORMAT_BINARY) {
-            span = this._binaryPropagator.join(operationName, carrier)
+        switch (format) {
+            case constants.FORMAT_TEXT_MAP:
+                span = this._textPropagator.join(operationName, carrier)
+                break
+            case constants.FORMAT_BINARY:
+                span = this._binaryPropagator.join(operationName, carrier)
+                break
+            case constants.FORMAT_HTTP_HEADER:
+                span = this._httpHeaderPropagator.join(operationName, carrier)
+                break
         }
         return span
     }
 
-    _isSampled(span) {
-        return this._sampler.isSampled(span)
+    _isSampled(span) { // eslint-disable-line
+        return true
     }
     _record(span) {
-        return this._recorder.record(span)
+        if (isTest) {
+            console.log(JSON.stringify({ // eslint-disable-line
+                operationName: span.operationName,
+                startTime: span.startTime,
+                duration: span.duration,
+                tags: span.tags,
+                logs: span.logs,
+
+                traceId: span.traceId.toString(),
+                spanId: span.spanId.toString(),
+                parentId: span.parentId.toString(),
+                sampled: span.sampled,
+                baggage: span.baggage,
+            }))
+        }
     }
 }

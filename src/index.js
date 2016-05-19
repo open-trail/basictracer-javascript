@@ -2,14 +2,15 @@
 
 import Tracer from './tracer'
 import Span from './span'
-import {DefaultSampler} from './sampler'
-import {DefaultRecorder} from './recorder'
+import constants from './constants'
 
 let tracer = new Tracer()
 
-tracer.DefaultSampler = DefaultSampler
-tracer.DefaultRecorder = DefaultRecorder
 tracer.Tracer = Tracer
 tracer.Span = Span
+
+for (let key in constants) {
+    tracer[key] = constants[key]
+}
 
 module.exports = tracer

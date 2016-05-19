@@ -10,17 +10,13 @@
 
 ```js
 var tracer = require('basictracer')
-tracer.configure({
-    sampler: mySampler,
-    recorder: myRecorder,
+tracer.setRecorder(function record(span) {
+    log(span)
 })
 
-var span = tracer.startSpan('someOperation')
+var span = tracer.startSpan('operationName')
 span.tag('key', 'value')
-span.log({
-    event: 'read',
-    paylog: {duration: 1000},
-})
+span.log('read', {duration: 1000})
 span.finish()
 ```
 
