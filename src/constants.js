@@ -22,12 +22,4 @@ module.exports = {
      * pairs.
      */
     FORMAT_TEXT_MAP: 'text_map',
-
-    /**
-     * Used to inject/join a span using string-> string map as a carrier.
-     *
-     * NOTE: HTTP_HEADER carrier differ from TEXT_MAP by prefix `x-` for every
-     * carrier key.
-     */
-    FORMAT_HTTP_HEADER: 'http_header',
 }

@@ -9,9 +9,12 @@ const isTest = process.env.NODE_ENV === 'test'
 // Implement https://github.com/opentracing/opentracing-javascript/blob/master/src/tracer.js
 export default class Tracer {
     constructor() {
+        for (let key in constants) {
+            this[key] = constants[key]
+        }
+
         this._binaryPropagator = new BinaryPropagator(this)
         this._textPropagator = new TextMapPropagator(this)
-        this._httpHeaderPropagator = new TextMapPropagator(this, 'x-')
     }
 
     /**
@@ -102,9 +105,6 @@ export default class Tracer {
             case constants.FORMAT_BINARY:
                 this._binaryPropagator.inject(span, carrier)
                 break
-            case constants.FORMAT_HTTP_HEADER:
-                this._httpHeaderPropagator.inject(span, carrier)
-                break
         }
     }
 
@@ -140,9 +140,6 @@ export default class Tracer {
                 break
             case constants.FORMAT_BINARY:
                 span = this._binaryPropagator.join(operationName, carrier)
-                break
-            case constants.FORMAT_HTTP_HEADER:
-                span = this._httpHeaderPropagator.join(operationName, carrier)
                 break
         }
         return span
