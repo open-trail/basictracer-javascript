@@ -2,7 +2,7 @@
   "name": "basictracer",
   "description": "The Javascript implementation of the BasicTracer referrence implementation",
   "repository": "CatTail/basictracer-javascript",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "main": "dist/index.js",
   "keywords": [
     "trace"
