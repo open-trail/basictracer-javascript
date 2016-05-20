@@ -31,7 +31,7 @@ export default class Tracer {
      *         The method take span and do whatever required to record a span.
      */
     setRecorder(record) {
-        this._recorder = record
+        this._record = record
     }
 
     /**
@@ -99,11 +99,14 @@ export default class Tracer {
      */
     inject(span, format, carrier) {
         switch (format) {
+            case constants.FORMAT_BINARY:
+                this._binaryPropagator.inject(span, carrier)
+                break
             case constants.FORMAT_TEXT_MAP:
                 this._textPropagator.inject(span, carrier)
                 break
-            case constants.FORMAT_BINARY:
-                this._binaryPropagator.inject(span, carrier)
+            default:
+                this._textPropagator.inject(span, carrier)
                 break
         }
     }
@@ -135,11 +138,14 @@ export default class Tracer {
     join(operationName, format, carrier) {
         let span
         switch (format) {
+            case constants.FORMAT_BINARY:
+                span = this._binaryPropagator.join(operationName, carrier)
+                break
             case constants.FORMAT_TEXT_MAP:
                 span = this._textPropagator.join(operationName, carrier)
                 break
-            case constants.FORMAT_BINARY:
-                span = this._binaryPropagator.join(operationName, carrier)
+            default:
+                span = this._textPropagator.join(operationName, carrier)
                 break
         }
         return span
