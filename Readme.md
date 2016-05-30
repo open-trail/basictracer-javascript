@@ -46,7 +46,7 @@ MIT
 
 [npm-image]: https://img.shields.io/npm/v/basictracer.svg?style=flat
 [npm-url]: https://npmjs.org/package/basictracer
-[travis-image]: https://img.shields.io/travis/CatTail/basictracer-javascript.svg?style=flat
-[travis-url]: https://travis-ci.org/CatTail/basictracer-javascript
-[coveralls-image]: https://img.shields.io/coveralls/CatTail/basictracer-javascript.svg?style=flat
-[coveralls-url]: https://coveralls.io/r/CatTail/basictracer-javascript?branch=master
+[travis-image]: https://img.shields.io/travis/open-trail/basictracer-javascript.svg?style=flat
+[travis-url]: https://travis-ci.org/open-trail/basictracer-javascript
+[coveralls-image]: https://img.shields.io/coveralls/open-trail/basictracer-javascript.svg?style=flat
+[coveralls-url]: https://coveralls.io/r/open-trail/basictracer-javascript?branch=master
