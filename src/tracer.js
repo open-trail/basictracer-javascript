@@ -152,7 +152,7 @@ export default class Tracer {
     }
 
     _isSampled(span) { // eslint-disable-line
-        return true
+        return false
     }
     _record(span) {
         if (isTest) {
