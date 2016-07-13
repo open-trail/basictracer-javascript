@@ -85,7 +85,7 @@ class TextMapPropagator {
                     throw new Error('Trace corrupted, sampled should be type ' +
                                     `Boolean, got ${carrier[field]}`)
                 }
-                parent.sampled = Boolean(carrier[field])
+                parent.sampled = carrier[field] === 'true'
                 count += 1
             } else if (field.indexOf(PREFIX_BAGGAGE) === 0) {
                 parent.baggage[field.slice(PREFIX_BAGGAGE.length)] =

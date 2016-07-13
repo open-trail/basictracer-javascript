@@ -49,7 +49,7 @@ describe('Span', () => {
         should(rootSpan.traceId).be.type('object')
         should(rootSpan.spanId).be.type('object')
         should(rootSpan.parentId.equals(rootSpan.spanId)).be.ok()
-        should(rootSpan.sampled).eql(true)
+        should(rootSpan.sampled).eql(false)
         should(rootSpan.baggage).be.type('object')
     })
 
