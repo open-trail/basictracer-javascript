@@ -27,8 +27,8 @@
     "debug": "^2.2.0",
     "lodash.clone": "^4.3.2",
     "long": "^3.1.0",
-    "node-uuid": "^1.4.7",
-    "protobufjs": "^5.0.1"
+    "protobufjs": "^5.0.1",
+    "uuid": "^3.0.0"
   },
   "scripts": {
     "debug": "./node_modules/.bin/mocha --debug-brk --require should test",

@@ -1,6 +1,6 @@
 'use strict'
 
-import uuid from 'node-uuid'
+import uuid from 'uuid'
 import clone from 'lodash.clone'
 import Long from 'long'
 
